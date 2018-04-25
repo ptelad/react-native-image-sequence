@@ -1,6 +1,6 @@
 package dk.madslee.imageSequence;
 
-import android.util.Log;
+import android.util.DisplayMetrics;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.uimanager.SimpleViewManager;
@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import javax.annotation.Nullable;
 
 public class RCTImageSequenceManager extends SimpleViewManager<RCTImageSequenceView> {
+    private ThemedReactContext reactContext;
+
     @Override
     public String getName() {
         return "RCTImageSequence";
@@ -19,6 +21,7 @@ public class RCTImageSequenceManager extends SimpleViewManager<RCTImageSequenceV
 
     @Override
     protected RCTImageSequenceView createViewInstance(ThemedReactContext reactContext) {
+        this.reactContext = reactContext;
         return new RCTImageSequenceView(reactContext);
     }
 
@@ -89,7 +92,9 @@ public class RCTImageSequenceManager extends SimpleViewManager<RCTImageSequenceV
     @ReactProp(name = "size")
     public void setSize(final RCTImageSequenceView view, @Nullable ReadableMap size) {
         if (size != null) {
-            view.setSize(size.getInt("width"), size.getInt("height"));
+            DisplayMetrics metrics = new DisplayMetrics();
+            reactContext.getCurrentActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            view.setSize(size.getInt("width") * (int)metrics.density, size.getInt("height") * (int)metrics.density);
         }
     }
 }
